@@ -20,6 +20,8 @@ jobs:
           go-version: ${{ matrix.go-version }}
       - name: Checkout code
         uses: actions/checkout@v1
+      - name: go mod
+        run: go mod download
       - name: golint
         run: go list ./... | xargs golint
       - name: go vet
