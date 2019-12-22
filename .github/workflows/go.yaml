@@ -2,10 +2,10 @@ name: go_test
 on:
   push:
     brances:
-      - master
+    - master
   pull_request:
     branches:
-      - master
+    - master
 jobs:
   test:
     strategy:
@@ -14,15 +14,19 @@ jobs:
         platform: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.platform }}
     steps:
-      - name: Install Go
-        uses: actions/setup-go@v1
-        with:
-          go-version: ${{ matrix.go-version }}
-      - name: Checkout code
-        uses: actions/checkout@v1
-      - name: go mod
-        run: go mod download
-      - name: golint
-        run: go list ./... | xargs golint
-      - name: go vet
-        run: go vet ./...
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: Checkout code
+      uses: actions/checkout@v1
+    - name: go mod
+      run: go mod download
+    - name: install golint
+      run: go get -u golang.org/x/lint/golint
+    - name: golint
+      run: go list ./... | xargs ${GOPATH}/bin/golint
+      env:
+        GOPATH: /home/runner/go
+    - name: go vet
+      run: go vet ./...
