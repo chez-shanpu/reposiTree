@@ -24,9 +24,9 @@ jobs:
       run: go mod download
     - name: install golint
       run: go get -u golang.org/x/lint/golint
-    - name: golint
-      run: go list ./... | xargs ${GOPATH}/bin/golint
-      env:
-        GOPATH: /home/runner/go
-    - name: go vet
+    - name: TEST golint
+      run: ~/go/bin/golint ./...
+    - name: TEST go vet
       run: go vet ./...
+    - name: TEST go test
+      run: go test ./...
