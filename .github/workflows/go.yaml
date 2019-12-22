@@ -25,7 +25,7 @@ jobs:
     - name: install golint
       run: go get -u golang.org/x/lint/golint
     - name: TEST golint
-      run: ${GOPTH}/bin/golint ./...
+      run: ${GOPATH}/bin/golint ./...
       env:
         GOPATH: /home/runner/go
     - name: TEST go vet
