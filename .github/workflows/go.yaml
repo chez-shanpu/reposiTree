@@ -24,9 +24,9 @@ jobs:
       run: go mod download
     - name: install golint
       run: go get -u golang.org/x/lint/golint
-    - name: [TEST] golint
+    - name: TEST golint
       run: golint ./...
-    - name: [TEST] go vet
+    - name: TEST go vet
       run: go vet ./...
-    - name: [TEST] go test
+    - name: TEST go test
       run: go test ./...
