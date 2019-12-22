@@ -1,7 +1,7 @@
 name: go_test
 on:
   push:
-    brances:
+    branches:
     - master
   pull_request:
     branches:
