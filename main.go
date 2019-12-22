@@ -18,5 +18,5 @@ package main
 import "github.com/chez-shanpu/reposiTree/cmd"
 
 func main() {
-  cmd.Execute()
+	cmd.Execute()
 }
