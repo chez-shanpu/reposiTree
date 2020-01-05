@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"io/ioutil"
 )
 
@@ -15,21 +14,6 @@ func NewTreeCompareCmd() *cobra.Command {
 		Short: "compare trees based on alignment distance",
 		RunE:  compareTree,
 	}
-
-	// flags
-	flags := cmd.Flags()
-	flags.StringP("repository-path", "p", "", "A path to the repository root")
-	flags.StringP("language", "l", "", "Repository's main language")
-	flags.StringP("output", "o", "", "output file name")
-
-	// bind flags
-	_ = viper.BindPFlag("tree.make.repopath", flags.Lookup("repository-path"))
-	_ = viper.BindPFlag("tree.make.language", flags.Lookup("language"))
-	_ = viper.BindPFlag("tree.make.output", flags.Lookup("output"))
-
-	// required
-	_ = cmd.MarkFlagRequired("repository-path")
-	_ = cmd.MarkFlagRequired("language")
 
 	return cmd
 }
