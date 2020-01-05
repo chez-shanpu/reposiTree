@@ -2,7 +2,6 @@ package tree
 
 import (
 	"fmt"
-	"github.com/chez-shanpu/reposiTree/cmd"
 	"github.com/chez-shanpu/reposiTree/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -10,9 +9,6 @@ import (
 	"time"
 )
 
-func init() {
-	cmd.NewTreeCmd().AddCommand(NewTreeMakeCmd())
-}
 
 func NewTreeMakeCmd() *cobra.Command {
 	cmd := &cobra.Command{

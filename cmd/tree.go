@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/chez-shanpu/reposiTree/pkg/tree"
 	"github.com/spf13/cobra"
 )
 
@@ -17,6 +18,9 @@ func NewTreeCmd() *cobra.Command {
 			return err
 		},
 	}
+
+	cmd.AddCommand(tree.NewTreeMakeCmd())
+	cmd.AddCommand(tree.NewTreeCompareCmd())
 
 	return cmd
 }
