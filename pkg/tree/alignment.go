@@ -1,7 +1,6 @@
 package tree
 
 import (
-	"github.com/chez-shanpu/repo2tree/model"
 	"log"
 	"math"
 )
@@ -33,12 +32,11 @@ func layerAlignmentDistanceTotal(sourceLayerRootNode *Node, targetLayerRootNode 
 
 // Calculate the total alignment distance for that layer
 func alignmentDistance(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 {
-	var dist float64 = 0
-
 	sourceLayerLength := layerLength(sourceLayerRootNode)
 	targetLayerLength := layerLength(targetLayerRootNode)
-	layerLengthGap := math.Abs(float64(sourceLayerLength - targetLayerLength))
-	if sourceLayerLength < targetLayerLength {
+
+	// swap
+	if sourceLayerLength > targetLayerLength {
 		tmpNode := sourceLayerRootNode
 		sourceLayerRootNode = targetLayerRootNode
 		targetLayerRootNode = tmpNode
@@ -46,16 +44,9 @@ func alignmentDistance(sourceLayerRootNode *Node, targetLayerRootNode *Node) flo
 		sourceLayerLength = targetLayerLength
 		targetLayerLength = tmpLayerLength
 	}
-	// TODO ここの比較の部分は最小費用流問題に落とし込んで，距離が最小になるノードの組み合わせを求めてから距離を算出する
-	for lg := layerLengthGap; lg > 0; lg-- {
-		dist += nodeDataSum(sourceLayerRootNode)
-		sourceLayerRootNode = sourceLayerRootNode.NextNode
-	}
-	for remainLength := targetLayerLength; remainLength > 0; remainLength-- {
-		dist += math.Abs(nodeDataSum(sourceLayerRootNode) - nodeDataSum(targetLayerRootNode))
-		sourceLayerRootNode = sourceLayerRootNode.NextNode
-		targetLayerRootNode = targetLayerRootNode.NextNode
-	}
+
+	dist := optNodesDiff(sourceLayerRootNode, targetLayerRootNode)
+
 	log.Printf("Alignment Distance between sourceLayerRootNode and targetLayerRootNode is %f", dist)
 	return dist
 }
@@ -68,20 +59,80 @@ func layerLength(leftmostNode *Node) (length int) {
 	return
 }
 
+// Always sourceLayer length < targetLayer length
+func optNodesDiff(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 {
+	res := 0.0
+
+	if sourceLayerRootNode == nil && targetLayerRootNode == nil {
+		return 0
+	} else if sourceLayerRootNode == nil {
+		for n := targetLayerRootNode; n != nil; n = n.NextNode {
+			res += nodeDataSum(n)
+		}
+		return res
+	}
+	sNode := sourceLayerRootNode
+	tNode := targetLayerRootNode
+	sNodeSum := nodeNumSum(sourceLayerRootNode)
+	tNodeSum := nodeNumSum(targetLayerRootNode)
+	s := sNodeSum + tNodeSum
+	t := s + 1
+
+	g := Graph{
+		NodeNum: t,
+	}
+
+	for i := 0; i < sNodeSum; i++ {
+		for j := 0; j < tNodeSum; j++ {
+			cost := math.Abs(nodeDataSum(sNode) - nodeDataSum(tNode))
+			g.AddEdge(i, j+sNodeSum, 1, cost)
+			if tNode != nil {
+				tNode = tNode.NextNode
+			}
+		}
+		if sNode != nil {
+			sNode = sNode.NextNode
+		}
+	}
+
+	for i := 0; i < sNodeSum; i++ {
+		g.AddEdge(s, i, 1, 0)
+	}
+
+	for j := 0; j < tNodeSum; j++ {
+		g.AddEdge(j+sNodeSum, t, 1, 0)
+	}
+
+	res = MinCostFlow(&g, s, t, tNodeSum)
+
+	n := targetLayerRootNode
+	for j := 0; j < tNodeSum; j++ {
+		e := g.Nodes[t].Edges[j]
+		if e.Cap != 1 {
+			res += nodeDataSum(n)
+		}
+		n = n.NextNode
+	}
+
+	return res
+}
+
+func nodeNumSum(node *Node) (cnt int) {
+	for node != nil {
+		cnt++
+		node = node.NextNode
+	}
+	return
+}
+
 func nodeDataSum(node *Node) (sum float64) {
 	sum = 0
 	if node == nil {
 		sum = 0
 		return
 	}
-	for key, val := range node.Data {
-		log.Printf("key is %d val is %f", key, val)
-		sum += math.Pow(val, math.Pow(10, float64(key)))
-		var hoge float64
-		hoge=10000000
-		log.Printf("sum is %v", sum)
-		log.Printf("%f", hoge)
+	for _, val := range node.Data {
+		sum += val
 	}
-	log.Printf("node %s's sum is %f",node.DirectoryName,sum)
 	return
 }
