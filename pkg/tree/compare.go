@@ -4,15 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/chez-shanpu/reposiTree/cmd"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"io/ioutil"
 )
-
-func init() {
-	cmd.NewTreeCmd().AddCommand(NewTreeCompareCmd())
-}
 
 func NewTreeCompareCmd() *cobra.Command {
 	cmd := &cobra.Command{
