@@ -1,4 +1,4 @@
-name: go_test
+name: experiment
 on:
   push:
     branches:
@@ -31,6 +31,6 @@ jobs:
       env:
         GOPATH: /home/runner/go
     - name: push github-release
-      run: ${GOPATH}/bin/ghr --help
+      run: ${GOPATH}/bin/ghr -version
       env:
         GOPATH: /home/runner/go
