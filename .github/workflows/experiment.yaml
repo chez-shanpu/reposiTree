@@ -28,9 +28,5 @@ jobs:
       run: go mod download
     - name: install ghr
       run: go get -u github.com/tcnksm/ghr
-      env:
-        GOPATH: /home/runner/go
     - name: push github-release
       run: ${GOPATH}/bin/ghr -version
-      env:
-        GOPATH: /home/runner/go
