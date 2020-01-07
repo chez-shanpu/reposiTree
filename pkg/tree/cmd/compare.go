@@ -35,8 +35,7 @@ func compareTree(cmd *cobra.Command, args []string) (err error) {
 		}
 	}
 	dist := tree.LayerAlignmentDistanceTotal(trees[0].RootNode, trees[1].RootNode)
-	fmt.Printf("Alignment distance between %s and %s is %f",
-		trees[0].RepositoryName, trees[1].RepositoryName, dist)
+	fmt.Print(dist)
 	return nil
 }
 
