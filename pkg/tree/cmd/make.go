@@ -2,14 +2,14 @@ package cmd
 
 import (
 	"fmt"
+	"path/filepath"
+	"time"
+
 	"github.com/chez-shanpu/reposiTree/pkg/tree"
 	"github.com/chez-shanpu/reposiTree/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"path/filepath"
-	"time"
 )
-
 
 func NewTreeMakeCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -32,6 +32,7 @@ func NewTreeMakeCmd() *cobra.Command {
 	// required
 	_ = cmd.MarkFlagRequired("repository-path")
 	_ = cmd.MarkFlagRequired("language")
+	_ = cmd.MarkFlagRequired("output")
 
 	return cmd
 }
