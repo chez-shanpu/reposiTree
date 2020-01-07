@@ -26,3 +26,6 @@ jobs:
       run: echo ${GITHUB_REF}
     - name: echo version3
       run: echo ${GITHUB_REF##*/}
+    - name: test if
+      run: echo linux
+      if: ${{ matrix.platform }}=='ubuntu-latest'
