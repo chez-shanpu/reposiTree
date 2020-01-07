@@ -22,7 +22,7 @@ type NodeInfo struct {
 
 func (n *Node) NodeNumSum() int {
 	cnt := 0
-	for node := n; n != nil; node = node.NextNode {
+	for node := n; node != nil; node = node.NextNode {
 		cnt++
 	}
 	return cnt
