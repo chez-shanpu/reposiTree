@@ -44,7 +44,7 @@ func readTreeFile(filePath string) (*NodeInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(content, tree)
+	err = json.Unmarshal(content, &tree)
 	if err != nil {
 		return nil, err
 	}

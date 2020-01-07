@@ -1,7 +1,6 @@
 package tree
 
 import (
-	"log"
 	"math"
 )
 
@@ -46,8 +45,6 @@ func alignmentDistance(sourceLayerRootNode *Node, targetLayerRootNode *Node) flo
 	}
 
 	dist := optNodesDiff(sourceLayerRootNode, targetLayerRootNode)
-
-	log.Printf("Alignment Distance between sourceLayerRootNode and targetLayerRootNode is %f", dist)
 	return dist
 }
 
@@ -73,51 +70,50 @@ func optNodesDiff(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 
 	}
 	sNode := sourceLayerRootNode
 	tNode := targetLayerRootNode
-	sNodeSum := nodeNumSum(sourceLayerRootNode)
-	tNodeSum := nodeNumSum(targetLayerRootNode)
-	s := sNodeSum + tNodeSum
+	sNodeNumSum := nodeNumSum(sourceLayerRootNode)
+	tNodeNumSum := nodeNumSum(targetLayerRootNode)
+	s := sNodeNumSum + tNodeNumSum
 	t := s + 1
 
 	g := Graph{
 		NodeNum: t,
 	}
 
-	for i := 0; i < sNodeSum; i++ {
-		for j := 0; j < tNodeSum; j++ {
-			cost := math.Abs(nodeDataSum(sNode) - nodeDataSum(tNode))
-			g.AddEdge(i, j+sNodeSum, 1, cost)
-			if tNode != nil {
-				tNode = tNode.NextNode
-			}
+	for i := 0; i < sNodeNumSum; i++ {
+
+		for j := 0; j < tNodeNumSum; j++ {
+
+			cost := nodeDataDiff(sNode, tNode)
+			g.AddEdge(i, j+sNodeNumSum, 1, cost)
+			tNode = tNode.NextNode
 		}
-		if sNode != nil {
-			sNode = sNode.NextNode
-		}
+		sNode = sNode.NextNode
+		tNode = targetLayerRootNode
 	}
 
-	for i := 0; i < sNodeSum; i++ {
+	for i := 0; i < sNodeNumSum; i++ {
 		g.AddEdge(s, i, 1, 0)
 	}
 
-	for j := 0; j < tNodeSum; j++ {
-		g.AddEdge(j+sNodeSum, t, 1, 0)
+	for j := 0; j < tNodeNumSum; j++ {
+		g.AddEdge(j+sNodeNumSum, t, 1, 0)
 	}
 
-	res = MinCostFlow(&g, s, t, tNodeSum)
+	res = MinCostFlow(&g, s, t, sNodeNumSum)
 
 	n := targetLayerRootNode
-	for j := 0; j < tNodeSum; j++ {
+	for j := 0; j < tNodeNumSum; j++ {
 		e := g.Nodes[t].Edges[j]
 		if e.Cap != 1 {
 			res += nodeDataSum(n)
 		}
 		n = n.NextNode
 	}
-
 	return res
 }
 
 func nodeNumSum(node *Node) (cnt int) {
+	cnt = 0
 	for node != nil {
 		cnt++
 		node = node.NextNode
@@ -135,4 +131,12 @@ func nodeDataSum(node *Node) (sum float64) {
 		sum += val
 	}
 	return
+}
+
+func nodeDataDiff(sNode *Node, tNode *Node) float64 {
+	res := 0.0
+	for i := range sNode.Data {
+		res += math.Abs(sNode.Data[i] - tNode.Data[i])
+	}
+	return res
 }
