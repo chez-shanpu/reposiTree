@@ -1,9 +1,10 @@
-package tree
+package cmd
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/chez-shanpu/reposiTree/pkg/tree"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 )
@@ -20,7 +21,7 @@ func NewTreeCompareCmd() *cobra.Command {
 
 func compareTree(cmd *cobra.Command, args []string) (err error) {
 	var treeFilePaths []string
-	var trees [2]*NodeInfo
+	var trees [2]*tree.NodeInfo
 
 	treeFilePaths = args
 	if len(treeFilePaths) != 2 {
@@ -32,14 +33,14 @@ func compareTree(cmd *cobra.Command, args []string) (err error) {
 			return err
 		}
 	}
-	dist := layerAlignmentDistanceTotal(trees[0].RootNode, trees[1].RootNode)
+	dist := tree.LayerAlignmentDistanceTotal(trees[0].RootNode, trees[1].RootNode)
 	fmt.Printf("Alignment distance between %s and %s is %f",
 		trees[0].RepositoryName, trees[1].RepositoryName, dist)
 	return nil
 }
 
-func readTreeFile(filePath string) (*NodeInfo, error) {
-	var tree *NodeInfo
+func readTreeFile(filePath string) (*tree.NodeInfo, error) {
+	var tree *tree.NodeInfo
 	content, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return nil, err

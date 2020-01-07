@@ -4,7 +4,7 @@ import (
 	"math"
 )
 
-func layerAlignmentDistanceTotal(sourceLayerRootNode *Node, targetLayerRootNode *Node) (sum float64) {
+func LayerAlignmentDistanceTotal(sourceLayerRootNode *Node, targetLayerRootNode *Node) (sum float64) {
 	sum = 0
 	sNode := sourceLayerRootNode
 	tNode := targetLayerRootNode
@@ -12,11 +12,11 @@ func layerAlignmentDistanceTotal(sourceLayerRootNode *Node, targetLayerRootNode 
 	for sNode != nil || tNode != nil {
 		if (sNode != nil && sNode.ChildNode != nil) || (tNode != nil && tNode.ChildNode != nil) {
 			if sNode == nil {
-				sum += layerAlignmentDistanceTotal(nil, tNode.ChildNode)
+				sum += LayerAlignmentDistanceTotal(nil, tNode.ChildNode)
 			} else if tNode == nil {
-				sum += layerAlignmentDistanceTotal(sNode.ChildNode, nil)
+				sum += LayerAlignmentDistanceTotal(sNode.ChildNode, nil)
 			} else {
-				sum += layerAlignmentDistanceTotal(sNode.ChildNode, tNode.ChildNode)
+				sum += LayerAlignmentDistanceTotal(sNode.ChildNode, tNode.ChildNode)
 			}
 		}
 		if sNode != nil {
