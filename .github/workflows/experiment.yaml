@@ -20,12 +20,17 @@ jobs:
         go-version: ${{ matrix.go-version }}
     - name: Checkout code
       uses: actions/checkout@v1
-    - name: echo version1
-      run: echo ${GITHUB_REF:10}
-    - name: echo version2
-      run: echo ${GITHUB_REF}
-    - name: echo version3
-      run: echo ${GITHUB_REF##*/}
-    - name: test if
-      run: echo linux
-      if: matrix.platform == 'ubuntu-latest'
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: go mod
+      run: go mod download
+    - name: install ghr
+      run: go get -u github.com/tcnksm/ghr
+      env:
+        GOPATH: /home/runner/go
+    - name: push github-release
+      run: ${GOPATH}/bin/ghr --help
+      env:
+        GOPATH: /home/runner/go
