@@ -33,4 +33,4 @@ jobs:
     - name: install ghr
       run: go get -u github.com/tcnksm/ghr
     - name: ghr version
-      run: ${GOPATH}/bin/ghr -version
+      run: echo ${GOPATH} && ${GOPATH}/bin/ghr -version
