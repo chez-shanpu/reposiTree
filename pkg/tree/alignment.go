@@ -72,7 +72,7 @@ func optNodesDiff(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 
 	t := s + 1
 
 	g := Graph{
-		NodeNum: t,
+		NodeNum: t + 1,
 	}
 
 	for i := 0; i < sNodeNumSum; i++ {

@@ -19,7 +19,6 @@ type Edge struct {
 }
 
 type Graph struct {
-	// TODO このNodeNumはnilじゃないNodesのインデックスの最大値が入る（つまりNodeの最大値-1） あとで名前変えたい
 	NodeNum int
 	Nodes   [MaxV]McfNode
 }
@@ -136,9 +135,9 @@ func MinCostFlow(g *Graph, s int, t int, inif int) float64 {
 
 func fill(slice []float64, val float64, start, end int) ([]float64, error) {
 	if len(slice) < start || len(slice) < end {
-		return nil, fmt.Errorf("Error")
+		return nil, fmt.Errorf("error")
 	}
-	for i := start; i <= end; i++ {
+	for i := start; i < end; i++ {
 		slice[i] = val
 	}
 	return slice, nil
