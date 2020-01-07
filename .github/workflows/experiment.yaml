@@ -20,5 +20,7 @@ jobs:
         go-version: ${{ matrix.go-version }}
     - name: Checkout code
       uses: actions/checkout@v1
-    - name: echo version
+    - name: echo version1
       run: echo ${GITHUB_REF:10}
+    - name: echo version2
+      run: echo ${GITHUB_REF}
