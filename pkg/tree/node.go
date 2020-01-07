@@ -44,7 +44,7 @@ func makeNode(dirPath string, depth int, parentNode *Node) (*Node, error) {
 	var nodeDataIndex int
 	var subDirPaths []string
 
-	_, node.DirectoryName = filepath.Split(dirPath)
+	node.DirectoryName = dirPath
 	node.Data = [9]float64{0, 0, 0, 0, 0, 0, 0, 0, 0}
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
