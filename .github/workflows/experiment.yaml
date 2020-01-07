@@ -20,13 +20,5 @@ jobs:
         go-version: ${{ matrix.go-version }}
     - name: Checkout code
       uses: actions/checkout@v1
-    - name: go mod
-      run: go mod download
-    - name: install golint
-      run: go get -u golang.org/x/lint/golint
-    - name: TEST golint
-      run: ~/go/bin/golint ./...
-    - name: TEST go vet
-      run: go vet ./...
-    - name: TEST go test
-      run: go test ./...
+    - name: echo version
+      run: echo ${GITHUB_REF:10}
