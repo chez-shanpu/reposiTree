@@ -1,9 +1,5 @@
 package tree
 
-import (
-	"math"
-)
-
 func LayerAlignmentDistanceTotal(sourceLayerRootNode *Node, targetLayerRootNode *Node) (sum float64) {
 	sum = 0
 	sNode := sourceLayerRootNode
@@ -64,14 +60,14 @@ func optNodesDiff(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 
 		return 0
 	} else if sourceLayerRootNode == nil {
 		for n := targetLayerRootNode; n != nil; n = n.NextNode {
-			res += nodeDataSum(n)
+			res += n.NodeDataSum()
 		}
 		return res
 	}
 	sNode := sourceLayerRootNode
 	tNode := targetLayerRootNode
-	sNodeNumSum := nodeNumSum(sourceLayerRootNode)
-	tNodeNumSum := nodeNumSum(targetLayerRootNode)
+	sNodeNumSum := sourceLayerRootNode.NodeNumSum()
+	tNodeNumSum := targetLayerRootNode.NodeNumSum()
 	s := sNodeNumSum + tNodeNumSum
 	t := s + 1
 
@@ -83,7 +79,7 @@ func optNodesDiff(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 
 
 		for j := 0; j < tNodeNumSum; j++ {
 
-			cost := nodeDataDiff(sNode, tNode)
+			cost := NodeDataDiff(sNode, tNode)
 			g.AddEdge(i, j+sNodeNumSum, 1, cost)
 			tNode = tNode.NextNode
 		}
@@ -105,38 +101,9 @@ func optNodesDiff(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 
 	for j := 0; j < tNodeNumSum; j++ {
 		e := g.Nodes[t].Edges[j]
 		if e.Cap != 1 {
-			res += nodeDataSum(n)
+			res += n.NodeDataSum()
 		}
 		n = n.NextNode
-	}
-	return res
-}
-
-func nodeNumSum(node *Node) (cnt int) {
-	cnt = 0
-	for node != nil {
-		cnt++
-		node = node.NextNode
-	}
-	return
-}
-
-func nodeDataSum(node *Node) (sum float64) {
-	sum = 0
-	if node == nil {
-		sum = 0
-		return
-	}
-	for _, val := range node.Data {
-		sum += val
-	}
-	return
-}
-
-func nodeDataDiff(sNode *Node, tNode *Node) float64 {
-	res := 0.0
-	for i := range sNode.Data {
-		res += math.Abs(sNode.Data[i] - tNode.Data[i])
 	}
 	return res
 }
