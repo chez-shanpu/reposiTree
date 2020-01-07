@@ -23,14 +23,14 @@ jobs:
       run: go get -u github.com/tcnksm/ghr
     - name: build linux
       run: ./build.sh linux ./bin
-      if: ${{ matrix.platform }}=='ubuntu-latest'
+      if: matrix.platform == 'ubuntu-latest'
     - name: build darwin
       run: ./build.sh darwin ./bin
-      if: ${{ matrix.platform }}=='macos-latest'
+      if: matrix.platform == 'macos-latest'
     - name: build windows
       run: ./build.sh windows ./bin
-      if: ${{ matrix.platform }}=='windows-latest'
+      if: matrix.platform == 'windows-latest'
     - name: push github-release
-      run: ${GOPATH}/bin/ghr -t ${{ secrets.GITHUB_TOKEN }} -u chez-shanpu -r reposiTree -replace -prerelease ${CIRCLE_TAG} ./dist
+      run: ${GOPATH}/bin/ghr -t ${{ secrets.GITHUB_TOKEN }} -u chez-shanpu -r reposiTree -replace -prerelease ${GITHUB_REF##*/} ./bin
       env:
         GOPATH: /home/runner/go
