@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+
 	"github.com/chez-shanpu/reposiTree/pkg/tree"
 	"github.com/spf13/cobra"
-	"io/ioutil"
 )
 
 func NewTreeCompareCmd() *cobra.Command {
