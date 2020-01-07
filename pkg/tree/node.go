@@ -64,7 +64,7 @@ func makeNode(dirPath string, depth int, parentNode *Node) (*Node, error) {
 		if parentNode == nil {
 			node.Data[key] = node.Data[key] / float64(depth)
 		} else {
-			node.Data[key] = node.Data[key]/float64(depth) + parentNode.Data[key]
+			node.Data[key] = (node.Data[key] + parentNode.Data[key]) / float64(depth)
 		}
 	}
 	if subDirPaths != nil {
