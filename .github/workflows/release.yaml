@@ -1,0 +1,36 @@
+name: release
+on:
+  push:
+    tags:
+    - '*'
+jobs:
+  test:
+    strategy:
+      matrix:
+        go-version: [1.13.x]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: Checkout code
+      uses: actions/checkout@v1
+    - name: go mod
+      run: go mod download
+    - name: install ghr
+      run: go get -u github.com/tcnksm/ghr
+    - name: build linux
+      run: ./build.sh linux ./bin
+      if: matrix.platform == 'ubuntu-latest'
+    - name: build darwin
+      run: ./build.sh darwin ./bin
+      if: matrix.platform == 'macos-latest'
+    - name: build windows
+      run: ./build.sh windows ./bin
+      if: matrix.platform == 'windows-latest'
+    - name: push github-release
+      run: ${GOPATH}/bin/ghr -t ${{ secrets.GITHUB_TOKEN }} -u chez-shanpu -r reposiTree -replace -prerelease ${GITHUB_REF##*/} ./bin
+      env:
+        GOPATH: /home/runner/go
