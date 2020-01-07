@@ -21,7 +21,7 @@ func TestMinCostFlow(t *testing.T) {
 
 	g := tree.Graph{
 		NodeNum: sNodeNum + tNodeNum + 1,
-		Nodes:   [100]tree.McfNode{},
+		Nodes:   [tree.MaxV]tree.McfNode{},
 	}
 
 	for i := 0; i < sNodeNum; i++ {
@@ -37,7 +37,6 @@ func TestMinCostFlow(t *testing.T) {
 	for j := 0; j < tNodeNum; j++ {
 		g.AddEdge(j+sNodeNum, tNode, 1, 0)
 	}
-
 
 	res := tree.MinCostFlow(&g, sNode, tNode, tNodeNum)
 	//TODO debug
