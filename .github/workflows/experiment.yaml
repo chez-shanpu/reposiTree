@@ -24,3 +24,5 @@ jobs:
       run: echo ${GITHUB_REF:10}
     - name: echo version2
       run: echo ${GITHUB_REF}
+    - name: echo version3
+      run: echo ${GITHUB_REF##*/}
