@@ -28,4 +28,4 @@ jobs:
       run: echo ${GITHUB_REF##*/}
     - name: test if
       run: echo linux
-      if: ${{ matrix.platform }}=='ubuntu-latest'
+      if: matrix.platform == 'ubuntu-latest'
