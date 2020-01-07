@@ -2,14 +2,18 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
+
+	"github.com/spf13/cobra"
 )
 
 var RootCmd = &cobra.Command{
 	Use:   "repotr",
 	Short: "Convert repository to tree structure and analyze",
-	//Long: `TODO`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		err := cmd.Help()
+		return err
+	},
 }
 
 func Execute() {

@@ -20,7 +20,7 @@ func TestMinCostFlow(t *testing.T) {
 	tNode := sNode + 1
 
 	g := tree.Graph{
-		NodeNum: sNodeNum + tNodeNum + 1,
+		NodeNum: sNodeNum + tNodeNum + 2,
 		Nodes:   [tree.MaxV]tree.McfNode{},
 	}
 

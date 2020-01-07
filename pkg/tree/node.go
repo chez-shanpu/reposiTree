@@ -2,6 +2,7 @@ package tree
 
 import (
 	"io/ioutil"
+	"math"
 	"path/filepath"
 )
 
@@ -17,6 +18,33 @@ type NodeInfo struct {
 	RepositoryName string `json:"repository_name"`
 	Language       string `json:"language"`
 	CreatedDate    string `json:"created_date"`
+}
+
+func (n *Node) NodeNumSum() int {
+	cnt := 0
+	for node := n; node != nil; node = node.NextNode {
+		cnt++
+	}
+	return cnt
+}
+
+func (n *Node) NodeDataSum() float64 {
+	sum := 0.0
+	if n == nil {
+		return sum
+	}
+	for _, val := range n.Data {
+		sum += val
+	}
+	return sum
+}
+
+func NodeDataDiff(sNode *Node, tNode *Node) float64 {
+	res := 0.0
+	for i := range sNode.Data {
+		res += math.Abs(sNode.Data[i] - tNode.Data[i])
+	}
+	return res
 }
 
 func MakeLayer(dirPaths []string, depth int, parentNode *Node) (*Node, error) {

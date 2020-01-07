@@ -1,14 +1,15 @@
-package tree
+package cmd
 
 import (
 	"fmt"
+	"path/filepath"
+	"time"
+
+	"github.com/chez-shanpu/reposiTree/pkg/tree"
 	"github.com/chez-shanpu/reposiTree/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"path/filepath"
-	"time"
 )
-
 
 func NewTreeMakeCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -31,6 +32,7 @@ func NewTreeMakeCmd() *cobra.Command {
 	// required
 	_ = cmd.MarkFlagRequired("repository-path")
 	_ = cmd.MarkFlagRequired("language")
+	_ = cmd.MarkFlagRequired("output")
 
 	return cmd
 }
@@ -40,11 +42,11 @@ func makeTree(cmd *cobra.Command, args []string) error {
 	repoRootPath := viper.GetString("tree.make.repopath")
 	_, repositoryName := filepath.Split(repoRootPath)
 
-	rootNode, err := MakeLayer([]string{repoRootPath}, 1, nil)
+	rootNode, err := tree.MakeLayer([]string{repoRootPath}, 1, nil)
 	if err != nil {
 		return err
 	}
-	nodeInfo := NodeInfo{
+	nodeInfo := tree.NodeInfo{
 		RootNode:       rootNode,
 		RepositoryName: repositoryName,
 		Language:       viper.GetString("tree.make.language"),
