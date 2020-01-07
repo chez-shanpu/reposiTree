@@ -24,13 +24,12 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ matrix.go-version }}
-    - name: export GOPATH
-      run: export GOPATH=$(go env GOPATH)
     - name: go mod
       run: go mod download
     - name: echo HOME
       run: echo ${HOME}
-    - name: install ghr
-      run: go get -u github.com/tcnksm/ghr
     - name: ghr version
-      run: echo ${GOPATH} && ${GOPATH}/bin/ghr -version
+      run: |
+        export GOPATH=$(go env GOPATH)
+        go get -u github.com/tcnksm/ghr
+        ${GOPATH}/bin/ghr -version
