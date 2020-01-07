@@ -30,6 +30,6 @@ jobs:
       if: matrix.platform == 'windows-latest'
     - name: push github-release
       run: |
-      export GOPATH=$(go env GOPATH)
-      go get -u github.com/tcnksm/ghr
-      ${GOPATH}/bin/ghr -t ${{ secrets.GITHUB_TOKEN }} -u chez-shanpu -r reposiTree -replace -prerelease ${GITHUB_REF##*/} ./bin
+        export GOPATH=$(go env GOPATH)
+        go get -u github.com/tcnksm/ghr
+        ${GOPATH}/bin/ghr -t ${{ secrets.GITHUB_TOKEN }} -u chez-shanpu -r reposiTree -replace -prerelease ${GITHUB_REF##*/} ./bin
