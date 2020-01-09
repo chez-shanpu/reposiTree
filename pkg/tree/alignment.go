@@ -100,14 +100,14 @@ func fixNodePointer(sNode, tNode *Node, g *Graph) *Node {
 	var resRootNode *Node
 	var tmpNode *Node
 
-	for i := 0; i < sNode.LayerLength(); i++ {
+	for i := 0; i < tNode.LayerLength(); i++ {
 		for _, j := range g.Nodes[i].Edges {
 			if j.ICap == 1 && j.Cap == 0 {
 				if resRootNode == nil {
-					resRootNode = tNode.GetNode(j.To - (sNode.LayerLength() - 1))
+					resRootNode = tNode.GetNode(j.To - (tNode.LayerLength() - 1))
 					tmpNode = resRootNode
 				} else {
-					tmpNode.NextNode = tNode.GetNode(j.To - (sNode.LayerLength() - 1))
+					tmpNode.NextNode = tNode.GetNode(j.To - (tNode.LayerLength() - 1))
 					tmpNode = tmpNode.NextNode
 				}
 			}
