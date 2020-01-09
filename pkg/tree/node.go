@@ -49,8 +49,14 @@ func (n *Node) LayerLength() int {
 
 func NodeDataDiff(sNode *Node, tNode *Node) float64 {
 	res := 0.0
-	for i := range sNode.Data {
-		res += math.Abs(sNode.Data[i] - tNode.Data[i])
+	if sNode == nil {
+		res = tNode.NodeDataSum()
+	} else if tNode == nil {
+		res = sNode.NodeDataSum()
+	} else {
+		for i := range sNode.Data {
+			res += math.Abs(sNode.Data[i] - tNode.Data[i])
+		}
 	}
 	return res
 }
