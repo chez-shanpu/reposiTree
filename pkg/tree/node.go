@@ -39,6 +39,14 @@ func (n *Node) NodeDataSum() float64 {
 	return sum
 }
 
+func (n *Node) LayerLength() int {
+	length := 0
+	for node := n; node != nil; node = node.NextNode {
+		length++
+	}
+	return length
+}
+
 func NodeDataDiff(sNode *Node, tNode *Node) float64 {
 	res := 0.0
 	for i := range sNode.Data {

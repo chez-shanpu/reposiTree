@@ -27,8 +27,8 @@ func LayerAlignmentDistanceTotal(sourceLayerRootNode *Node, targetLayerRootNode 
 
 // Calculate the total alignment distance for that layer
 func alignmentDistance(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 {
-	sourceLayerLength := layerLength(sourceLayerRootNode)
-	targetLayerLength := layerLength(targetLayerRootNode)
+	sourceLayerLength := sourceLayerRootNode.LayerLength()
+	targetLayerLength := targetLayerRootNode.LayerLength()
 
 	// swap
 	if sourceLayerLength > targetLayerLength {
@@ -42,14 +42,6 @@ func alignmentDistance(sourceLayerRootNode *Node, targetLayerRootNode *Node) flo
 
 	dist := optNodesDiff(sourceLayerRootNode, targetLayerRootNode)
 	return dist
-}
-
-func layerLength(leftmostNode *Node) (length int) {
-	length = 0
-	for node := leftmostNode; node != nil; node = node.NextNode {
-		length++
-	}
-	return
 }
 
 // Always sourceLayer length < targetLayer length
