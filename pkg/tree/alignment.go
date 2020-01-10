@@ -4,7 +4,9 @@ func LayerAlignmentDistanceTotal(sourceLayerRootNode *Node, targetLayerRootNode 
 	sum = 0
 	sNode := sourceLayerRootNode
 	tNode := targetLayerRootNode
+
 	sum += alignmentDistance(sNode, tNode)
+
 	for sNode != nil || tNode != nil {
 		if (sNode != nil && sNode.ChildNode != nil) || (tNode != nil && tNode.ChildNode != nil) {
 			if sNode == nil {
@@ -27,10 +29,11 @@ func LayerAlignmentDistanceTotal(sourceLayerRootNode *Node, targetLayerRootNode 
 
 // Calculate the total alignment distance for that layer
 func alignmentDistance(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 {
-	sourceLayerLength := layerLength(sourceLayerRootNode)
-	targetLayerLength := layerLength(targetLayerRootNode)
+	sourceLayerLength := sourceLayerRootNode.LayerLength()
+	targetLayerLength := targetLayerRootNode.LayerLength()
 
 	// swap
+	// make sourceLayer length < targetLayer length
 	if sourceLayerLength > targetLayerLength {
 		tmpNode := sourceLayerRootNode
 		sourceLayerRootNode = targetLayerRootNode
@@ -44,15 +47,7 @@ func alignmentDistance(sourceLayerRootNode *Node, targetLayerRootNode *Node) flo
 	return dist
 }
 
-func layerLength(leftmostNode *Node) (length int) {
-	length = 0
-	for node := leftmostNode; node != nil; node = node.NextNode {
-		length++
-	}
-	return
-}
-
-// Always sourceLayer length < targetLayer length
+// Must sourceLayer length < targetLayer length
 func optNodesDiff(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 {
 	res := 0.0
 
@@ -64,8 +59,6 @@ func optNodesDiff(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 
 		}
 		return res
 	}
-	sNode := sourceLayerRootNode
-	tNode := targetLayerRootNode
 	sNodeNumSum := sourceLayerRootNode.NodeNumSum()
 	tNodeNumSum := targetLayerRootNode.NodeNumSum()
 	s := sNodeNumSum + tNodeNumSum
@@ -75,15 +68,17 @@ func optNodesDiff(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 
 		NodeNum: t + 1,
 	}
 
-	for i := 0; i < sNodeNumSum; i++ {
-
+	sNode := sourceLayerRootNode
+	tNode := targetLayerRootNode
+	for i := 0; i < tNodeNumSum; i++ {
 		for j := 0; j < tNodeNumSum; j++ {
-
 			cost := NodeDataDiff(sNode, tNode)
 			g.AddEdge(i, j+sNodeNumSum, 1, cost)
 			tNode = tNode.NextNode
 		}
-		sNode = sNode.NextNode
+		if sNode != nil {
+			sNode = sNode.NextNode
+		}
 		tNode = targetLayerRootNode
 	}
 
@@ -95,15 +90,29 @@ func optNodesDiff(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 
 		g.AddEdge(j+sNodeNumSum, t, 1, 0)
 	}
 
-	res = MinCostFlow(&g, s, t, sNodeNumSum)
+	res = MinCostFlow(&g, s, t, tNodeNumSum)
 
-	n := targetLayerRootNode
-	for j := 0; j < tNodeNumSum; j++ {
-		e := g.Nodes[t].Edges[j]
-		if e.Cap != 1 {
-			res += n.NodeDataSum()
-		}
-		n = n.NextNode
-	}
+	targetLayerRootNode = fixNodePointer(sourceLayerRootNode, targetLayerRootNode, &g)
 	return res
+}
+
+func fixNodePointer(sNode, tNode *Node, g *Graph) *Node {
+	var resRootNode *Node
+	var tmpNode *Node
+
+	for i := 0; i < tNode.LayerLength(); i++ {
+		for _, j := range g.Nodes[i].Edges {
+			if j.ICap == 1 && j.Cap == 0 {
+				if resRootNode == nil {
+					resRootNode = tNode.GetNode(j.To - (tNode.LayerLength() - 1))
+					tmpNode = resRootNode
+				} else {
+					tmpNode.NextNode = tNode.GetNode(j.To - (tNode.LayerLength() - 1))
+					tmpNode = tmpNode.NextNode
+				}
+			}
+		}
+	}
+
+	return resRootNode
 }

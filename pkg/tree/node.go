@@ -39,10 +39,36 @@ func (n *Node) NodeDataSum() float64 {
 	return sum
 }
 
+func (n *Node) LayerLength() int {
+	length := 0
+	for node := n; node != nil; node = node.NextNode {
+		length++
+	}
+	return length
+}
+
+func (n *Node) GetNode(index int) *Node {
+	node := n
+	for i := 0; i < index; i++ {
+		if node != nil {
+			node = node.NextNode
+		} else {
+			return nil
+		}
+	}
+	return node
+}
+
 func NodeDataDiff(sNode *Node, tNode *Node) float64 {
 	res := 0.0
-	for i := range sNode.Data {
-		res += math.Abs(sNode.Data[i] - tNode.Data[i])
+	if sNode == nil {
+		res = tNode.NodeDataSum()
+	} else if tNode == nil {
+		res = sNode.NodeDataSum()
+	} else {
+		for i := range sNode.Data {
+			res += math.Abs(sNode.Data[i] - tNode.Data[i])
+		}
 	}
 	return res
 }
