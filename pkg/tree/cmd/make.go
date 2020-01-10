@@ -42,7 +42,7 @@ func makeTree(cmd *cobra.Command, args []string) error {
 	repoRootPath := viper.GetString("tree.make.repopath")
 	_, repositoryName := filepath.Split(repoRootPath)
 
-	rootNode, err := tree.MakeLayer([]string{repoRootPath}, 1, nil)
+	rootNode, err := tree.MakeLayer([]string{repoRootPath}, 1, nil, viper.GetString("tree.make.language"))
 	if err != nil {
 		return err
 	}
