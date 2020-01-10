@@ -73,12 +73,12 @@ func NodeDataDiff(sNode *Node, tNode *Node) float64 {
 	return res
 }
 
-func MakeLayer(dirPaths []string, depth int, parentNode *Node) (*Node, error) {
+func MakeLayer(dirPaths []string, depth int, parentNode *Node, language string) (*Node, error) {
 	var rightmostNode *Node
 	var leftmostNode *Node
 
 	for _, dirPath := range dirPaths {
-		targetNode, err := makeNode(dirPath, depth, parentNode)
+		targetNode, err := makeNode(dirPath, depth, parentNode, language)
 		if err != nil {
 			return nil, err
 		}
@@ -93,7 +93,7 @@ func MakeLayer(dirPaths []string, depth int, parentNode *Node) (*Node, error) {
 	return leftmostNode, nil
 }
 
-func makeNode(dirPath string, depth int, parentNode *Node) (*Node, error) {
+func makeNode(dirPath string, depth int, parentNode *Node, language string) (*Node, error) {
 	var node Node
 	var nodeDataIndex int
 	var subDirPaths []string
@@ -108,7 +108,10 @@ func makeNode(dirPath string, depth int, parentNode *Node) (*Node, error) {
 		if file.IsDir() {
 			subDirPaths = append(subDirPaths, filepath.Join(dirPath, file.Name()))
 		} else {
-			nodeDataIndex = FileClassifier(file.Name())
+			nodeDataIndex, err = FileClassifier(file.Name(), language)
+			if err != nil {
+				return nil, err
+			}
 			if node.Data[nodeDataIndex] == 0 {
 				node.Data[nodeDataIndex] = 1
 			}
@@ -122,7 +125,7 @@ func makeNode(dirPath string, depth int, parentNode *Node) (*Node, error) {
 		}
 	}
 	if subDirPaths != nil {
-		node.ChildNode, err = MakeLayer(subDirPaths, depth+1, &node)
+		node.ChildNode, err = MakeLayer(subDirPaths, depth+1, &node, language)
 		if err != nil {
 			return nil, err
 		}
