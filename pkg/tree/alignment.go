@@ -82,12 +82,9 @@ func optNodesDiff(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 
 		tNode = targetLayerRootNode
 	}
 
-	for i := 0; i < sNodeNumSum; i++ {
+	for i := 0; i < tNodeNumSum; i++ {
 		g.AddEdge(s, i, 1, 0)
-	}
-
-	for j := 0; j < tNodeNumSum; j++ {
-		g.AddEdge(j+sNodeNumSum, t, 1, 0)
+		g.AddEdge(i+sNodeNumSum, t, 1, 0)
 	}
 
 	res = MinCostFlow(&g, s, t, tNodeNumSum)
