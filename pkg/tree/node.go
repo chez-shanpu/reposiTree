@@ -47,16 +47,16 @@ func (n *Node) LayerLength() int {
 	return length
 }
 
-func (n *Node) GetNode(index int) *Node {
+func (n *Node) GetNode(index int) Node {
 	node := n
 	for i := 0; i < index; i++ {
 		if node != nil {
 			node = node.NextNode
 		} else {
-			return nil
+			return *new(Node)
 		}
 	}
-	return node
+	return *node
 }
 
 func NodeDataDiff(sNode *Node, tNode *Node) float64 {

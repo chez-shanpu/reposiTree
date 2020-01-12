@@ -89,27 +89,29 @@ func optNodesDiff(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 
 
 	res = MinCostFlow(&g, s, t, tNodeNumSum)
 
-	targetLayerRootNode = fixNodePointer(sourceLayerRootNode, targetLayerRootNode, &g)
+	*targetLayerRootNode = fixNodePointer(sourceLayerRootNode, targetLayerRootNode, &g)
 	return res
 }
 
-func fixNodePointer(sNode, tNode *Node, g *Graph) *Node {
-	var resRootNode *Node
-	var tmpNode *Node
+func fixNodePointer(sNode, tNode *Node, g *Graph) Node {
+	var resRootNode Node
+	var tmpNodePointer *Node
 
 	for i := 0; i < tNode.LayerLength(); i++ {
 		for _, j := range g.Nodes[i].Edges {
 			if j.ICap == 1 && j.Cap == 0 {
-				if resRootNode == nil {
-					resRootNode = tNode.GetNode(j.To - (tNode.LayerLength() - 1))
-					tmpNode = resRootNode
+				if resRootNode == *new(Node) {
+					resRootNode = tNode.GetNode(j.To - tNode.LayerLength())
+					tmpNodePointer = &resRootNode
 				} else {
-					tmpNode.NextNode = tNode.GetNode(j.To - (tNode.LayerLength() - 1))
-					tmpNode = tmpNode.NextNode
+					tmpNode := tNode.GetNode(j.To - tNode.LayerLength())
+					tmpNodePointer.NextNode = &tmpNode
+					tmpNodePointer = &tmpNode
+					tmpNodePointer.NextNode = nil
 				}
+				break
 			}
 		}
 	}
-
 	return resRootNode
 }
