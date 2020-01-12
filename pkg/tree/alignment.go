@@ -10,7 +10,7 @@ func AlignmentDistance(sNodes, tNodes []*Node) (sum float64, err error) {
 
 	for i, _ := range tNodes {
 		var dist float64
-		if sNodes != nil {
+		if i < len(sNodes) {
 			dist, err = AlignmentDistance(sNodes[i].ChildNodes, tNodes[i].ChildNodes)
 		} else {
 			dist, err = AlignmentDistance(nil, tNodes[i].ChildNodes)
@@ -65,7 +65,7 @@ func optNodesDiff(sNodes, tNodes []*Node) (float64, []*Node) {
 
 	for i, _ := range tNodes {
 		g.AddEdge(s, i, 1, 0)
-		g.AddEdge(i+sNodesLength, t, 1, 0)
+		g.AddEdge(i+tNodesLength, t, 1, 0)
 	}
 
 	res = MinCostFlow(&g, s, t, tNodesLength)
