@@ -1,117 +1,89 @@
 package tree
 
-func LayerAlignmentDistanceTotal(sourceLayerRootNode *Node, targetLayerRootNode *Node) (sum float64) {
-	sum = 0
-	sNode := sourceLayerRootNode
-	tNode := targetLayerRootNode
-
-	sum += alignmentDistance(sNode, tNode)
-
-	for sNode != nil || tNode != nil {
-		if (sNode != nil && sNode.ChildNode != nil) || (tNode != nil && tNode.ChildNode != nil) {
-			if sNode == nil {
-				sum += LayerAlignmentDistanceTotal(nil, tNode.ChildNode)
-			} else if tNode == nil {
-				sum += LayerAlignmentDistanceTotal(sNode.ChildNode, nil)
-			} else {
-				sum += LayerAlignmentDistanceTotal(sNode.ChildNode, tNode.ChildNode)
-			}
-		}
-		if sNode != nil {
-			sNode = sNode.NextNode
-		}
-		if tNode != nil {
-			tNode = tNode.NextNode
-		}
-	}
-	return
-}
-
-// Calculate the total alignment distance for that layer
-func alignmentDistance(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 {
-	sourceLayerLength := sourceLayerRootNode.LayerLength()
-	targetLayerLength := targetLayerRootNode.LayerLength()
-
-	// swap
-	// make sourceLayer length < targetLayer length
-	if sourceLayerLength > targetLayerLength {
-		tmpNode := sourceLayerRootNode
-		sourceLayerRootNode = targetLayerRootNode
-		targetLayerRootNode = tmpNode
-		tmpLayerLength := sourceLayerLength
-		sourceLayerLength = targetLayerLength
-		targetLayerLength = tmpLayerLength
+func AlignmentDistance(sNodes, tNodes []*Node) (sum float64, err error) {
+	if len(sNodes) > len(tNodes) {
+		sNodes, tNodes = SwapNodeSlice(sNodes, tNodes)
 	}
 
-	dist := optNodesDiff(sourceLayerRootNode, targetLayerRootNode)
-	return dist
+	res, tNodes := optNodesDiff(sNodes, tNodes)
+	sum += res
+
+	for i, _ := range tNodes {
+		var dist float64
+		if sNodes != nil {
+			dist, err = AlignmentDistance(sNodes[i].ChildNodes, tNodes[i].ChildNodes)
+		} else {
+			dist, err = AlignmentDistance(nil, tNodes[i].ChildNodes)
+		}
+
+		if err != nil {
+			return 0, err
+		} else {
+			sum += dist
+		}
+	}
+	return sum, nil
 }
 
 // Must sourceLayer length < targetLayer length
-func optNodesDiff(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 {
-	res := 0.0
-
-	if sourceLayerRootNode == nil && targetLayerRootNode == nil {
-		return 0
-	} else if sourceLayerRootNode == nil {
-		for n := targetLayerRootNode; n != nil; n = n.NextNode {
-			res += n.NodeDataSum()
+func optNodesDiff(sNodes, tNodes []*Node) (float64, []*Node) {
+	var res float64
+	if sNodes == nil && tNodes == nil {
+		return 0, tNodes
+	} else if sNodes == nil {
+		for i, _ := range tNodes {
+			res += NodeDataDiff(nil, tNodes[i])
 		}
-		return res
+		return res, tNodes
+	} else if tNodes == nil {
+		for i, _ := range sNodes {
+			res += NodeDataDiff(sNodes[i], nil)
+		}
+		return res, tNodes
 	}
-	sNodeNumSum := sourceLayerRootNode.NodeNumSum()
-	tNodeNumSum := targetLayerRootNode.NodeNumSum()
-	s := sNodeNumSum + tNodeNumSum
+
+	sNodesLength := len(sNodes)
+	tNodesLength := len(tNodes)
+	s := tNodesLength * 2
 	t := s + 1
 
 	g := Graph{
 		NodeNum: t + 1,
 	}
 
-	sNode := sourceLayerRootNode
-	tNode := targetLayerRootNode
-	for i := 0; i < tNodeNumSum; i++ {
-		for j := 0; j < tNodeNumSum; j++ {
-			cost := NodeDataDiff(sNode, tNode)
-			g.AddEdge(i, j+sNodeNumSum, 1, cost)
-			tNode = tNode.NextNode
+	for i, _ := range tNodes {
+		for j, _ := range tNodes {
+			var cost float64
+			if i < sNodesLength {
+				cost = NodeDataDiff(sNodes[i], tNodes[j])
+			} else {
+				cost = NodeDataDiff(nil, tNodes[j])
+			}
+			g.AddEdge(i, j+tNodesLength, 1, cost)
 		}
-		if sNode != nil {
-			sNode = sNode.NextNode
-		}
-		tNode = targetLayerRootNode
 	}
 
-	for i := 0; i < tNodeNumSum; i++ {
+	for i, _ := range tNodes {
 		g.AddEdge(s, i, 1, 0)
-		g.AddEdge(i+sNodeNumSum, t, 1, 0)
+		g.AddEdge(i+sNodesLength, t, 1, 0)
 	}
 
-	res = MinCostFlow(&g, s, t, tNodeNumSum)
+	res = MinCostFlow(&g, s, t, tNodesLength)
 
-	*targetLayerRootNode = fixNodePointer(sourceLayerRootNode, targetLayerRootNode, &g)
-	return res
+	tNewNodes := fixNodePointer(sNodes, tNodes, &g)
+	return res, tNewNodes
 }
 
-func fixNodePointer(sNode, tNode *Node, g *Graph) Node {
-	var resRootNode Node
-	var tmpNodePointer *Node
+func fixNodePointer(sNodes, tNodes []*Node, g *Graph) []*Node {
+	var resNodes []*Node
 
-	for i := 0; i < tNode.LayerLength(); i++ {
+	for i := range tNodes {
 		for _, j := range g.Nodes[i].Edges {
 			if j.ICap == 1 && j.Cap == 0 {
-				if resRootNode == *new(Node) {
-					resRootNode = tNode.GetNode(j.To - tNode.LayerLength())
-					tmpNodePointer = &resRootNode
-				} else {
-					tmpNode := tNode.GetNode(j.To - tNode.LayerLength())
-					tmpNodePointer.NextNode = &tmpNode
-					tmpNodePointer = &tmpNode
-					tmpNodePointer.NextNode = nil
-				}
+				resNodes = append(resNodes, tNodes[j.To-len(tNodes)])
 				break
 			}
 		}
 	}
-	return resRootNode
+	return resNodes
 }
