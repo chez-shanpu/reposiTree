@@ -69,7 +69,7 @@ func MinCostFlow(g *Graph, s int, t int, inif int) float64 {
 	f := inif
 
 	for f > 0 {
-		dist, _ := fill(dist, INF, 0, g.NodeNum)
+		dist, _ = fill(dist, INF, 0, g.NodeNum)
 		dist[s] = 0
 		for true {
 			update := false
@@ -79,7 +79,7 @@ func MinCostFlow(g *Graph, s int, t int, inif int) float64 {
 				}
 				for i, _ := range g.Nodes[node].Edges {
 					e := &(g.Nodes[node].Edges[i])
-					if e.Cap > 0 && dist[e.To] > dist[node]+e.Cost {
+					if (e.Cap > 0) && (dist[e.To] > dist[node]+e.Cost) {
 						dist[e.To] = dist[node] + e.Cost
 						preNode[e.To] = node
 						preEdge[e.To] = i

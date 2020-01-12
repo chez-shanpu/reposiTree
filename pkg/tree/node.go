@@ -60,16 +60,22 @@ func (n *Node) GetNode(index int) Node {
 }
 
 func NodeDataDiff(sNode *Node, tNode *Node) float64 {
-	res := 0.0
+	sum := 0.0
 	if sNode == nil {
-		res = tNode.NodeDataSum()
+		for i := range tNode.Data {
+			sum += math.Pow(tNode.Data[i], 2)
+		}
 	} else if tNode == nil {
-		res = sNode.NodeDataSum()
+		for i := range sNode.Data {
+			sum += math.Pow(sNode.Data[i], 2)
+		}
 	} else {
 		for i := range sNode.Data {
-			res += math.Abs(sNode.Data[i] - tNode.Data[i])
+			sum += math.Pow(sNode.Data[i]-tNode.Data[i], 2)
 		}
+
 	}
+	res := math.Sqrt(sum)
 	return res
 }
 
