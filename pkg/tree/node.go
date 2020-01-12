@@ -3,14 +3,14 @@ package tree
 import (
 	"io/ioutil"
 	"math"
+	"os"
 	"path/filepath"
 )
 
 type Node struct {
-	Data          [9]float64 `json:"data"`
-	DirectoryName string     `json:"directory_name"`
-	NextNode      *Node      `json:"next_node"`
-	ChildNode     *Node      `json:"child_node"`
+	Vector        [MAX_FILETYPE]float64 `json:"data"`
+	DirectoryName string                `json:"directory_name"`
+	ChildNodes    []*Node               `json:"child_nodes"`
 }
 
 type NodeInfo struct {
@@ -20,115 +20,73 @@ type NodeInfo struct {
 	CreatedDate    string `json:"created_date"`
 }
 
-func (n *Node) NodeNumSum() int {
-	cnt := 0
-	for node := n; node != nil; node = node.NextNode {
-		cnt++
-	}
-	return cnt
+func SwapNodeSlice(sNodes, tNodes []*Node) ([]*Node, []*Node) {
+	tmp := sNodes
+	sNodes = tNodes
+	tNodes = tmp
+	return sNodes, tNodes
 }
 
-func (n *Node) NodeDataSum() float64 {
-	sum := 0.0
-	if n == nil {
-		return sum
-	}
-	for _, val := range n.Data {
-		sum += val
-	}
-	return sum
-}
+func NodeDataDiff(sNode *Node, tNode *Node) (res float64) {
+	var sum float64
 
-func (n *Node) LayerLength() int {
-	length := 0
-	for node := n; node != nil; node = node.NextNode {
-		length++
-	}
-	return length
-}
-
-func (n *Node) GetNode(index int) Node {
-	node := n
-	for i := 0; i < index; i++ {
-		if node != nil {
-			node = node.NextNode
-		} else {
-			return *new(Node)
+	if sNode == nil && tNode == nil {
+		return 0
+	} else if sNode == nil {
+		for i := range tNode.Vector {
+			sum += math.Pow(tNode.Vector[i], 2)
 		}
-	}
-	return *node
-}
-
-func NodeDataDiff(sNode *Node, tNode *Node) float64 {
-	res := 0.0
-	if sNode == nil {
-		res = tNode.NodeDataSum()
 	} else if tNode == nil {
-		res = sNode.NodeDataSum()
+		for i := range sNode.Vector {
+			sum += math.Pow(sNode.Vector[i], 2)
+		}
 	} else {
-		for i := range sNode.Data {
-			res += math.Abs(sNode.Data[i] - tNode.Data[i])
+		for i := range sNode.Vector {
+			sum += math.Pow(sNode.Vector[i]-tNode.Vector[i], 2)
 		}
 	}
+	res = math.Sqrt(sum)
 	return res
 }
 
-func MakeLayer(dirPaths []string, depth int, parentNode *Node, language string) (*Node, error) {
-	var rightmostNode *Node
-	var leftmostNode *Node
+func MakeNode(dirPath string, dirName string, depth int, language string, pNode *Node) (*Node, error) {
+	var subDirs []os.FileInfo
 
-	for _, dirPath := range dirPaths {
-		targetNode, err := makeNode(dirPath, depth, parentNode, language)
-		if err != nil {
-			return nil, err
-		}
+	n := new(Node)
+	n.DirectoryName = dirName
+	n.Vector = [MAX_FILETYPE]float64{0, 0, 0, 0, 0, 0, 0, 0, 0}
 
-		if leftmostNode == nil {
-			leftmostNode = targetNode
-		} else {
-			rightmostNode.NextNode = targetNode
-		}
-		rightmostNode = targetNode
-	}
-	return leftmostNode, nil
-}
-
-func makeNode(dirPath string, depth int, parentNode *Node, language string) (*Node, error) {
-	var node Node
-	var nodeDataIndex int
-	var subDirPaths []string
-
-	node.DirectoryName = dirPath
-	node.Data = [9]float64{0, 0, 0, 0, 0, 0, 0, 0, 0}
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
 		return nil, err
 	}
 	for _, file := range files {
 		if file.IsDir() {
-			subDirPaths = append(subDirPaths, filepath.Join(dirPath, file.Name()))
+			subDirs = append(subDirs, file)
 		} else {
-			nodeDataIndex, err = FileClassifier(file.Name(), language)
+			nodeDataIndex, err := FileClassifier(file.Name(), language)
 			if err != nil {
 				return nil, err
 			}
-			if node.Data[nodeDataIndex] == 0 {
-				node.Data[nodeDataIndex] = 1
+			if n.Vector[nodeDataIndex] == 0 {
+				n.Vector[nodeDataIndex] = 1
 			}
 		}
 	}
-	for key := range node.Data {
-		if parentNode == nil {
-			node.Data[key] = node.Data[key] / float64(depth)
+	for key := range n.Vector {
+		if pNode == nil {
+			n.Vector[key] = n.Vector[key] / float64(depth)
 		} else {
-			node.Data[key] = (node.Data[key] + parentNode.Data[key]) / float64(depth)
+			n.Vector[key] = (n.Vector[key] + n.Vector[key]) / float64(depth)
 		}
 	}
-	if subDirPaths != nil {
-		node.ChildNode, err = MakeLayer(subDirPaths, depth+1, &node, language)
+
+	for _, subDir := range subDirs {
+		childNode, err := MakeNode(filepath.Join(dirPath, subDir.Name()), filepath.Join(dirName, subDir.Name()), depth+1, language, n)
 		if err != nil {
 			return nil, err
 		}
+		n.ChildNodes = append(n.ChildNodes, childNode)
 	}
-	return &node, nil
+	return n, nil
 }
