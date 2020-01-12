@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"fmt"
+	"log"
 	"path/filepath"
 	"time"
 
@@ -39,16 +39,17 @@ func NewTreeMakeCmd() *cobra.Command {
 
 func makeTree(cmd *cobra.Command, args []string) error {
 	createdDate := time.Now().String()
+	language := viper.GetString("tree.make.language")
 	repoRootPath := viper.GetString("tree.make.repopath")
-	_, repositoryName := filepath.Split(repoRootPath)
+	_, repoName := filepath.Split(repoRootPath)
 
-	rootNode, err := tree.MakeLayer([]string{repoRootPath}, 1, nil, viper.GetString("tree.make.language"))
+	rootNode, err := tree.MakeNode(repoRootPath, repoName, 1, language, nil)
 	if err != nil {
 		return err
 	}
 	nodeInfo := tree.NodeInfo{
 		RootNode:       rootNode,
-		RepositoryName: repositoryName,
+		RepositoryName: repoName,
 		Language:       viper.GetString("tree.make.language"),
 		CreatedDate:    createdDate,
 	}
@@ -56,7 +57,6 @@ func makeTree(cmd *cobra.Command, args []string) error {
 	// output to the .json
 	outputName := viper.GetString("tree.make.output")
 	utils.OutputJson(outputName, nodeInfo)
-	fmt.Printf("Output to %v completed", outputName)
-
+	log.Printf("Output to %v completed", outputName)
 	return nil
 }

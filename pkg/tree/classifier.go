@@ -6,6 +6,8 @@ import (
 	"regexp"
 )
 
+const MAX_FILETYPE = 9
+
 var (
 	// TODO Available in other languages
 	GoSourceRegex = regexp.MustCompile(`.*\.go$`)
