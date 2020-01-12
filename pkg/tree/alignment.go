@@ -61,7 +61,7 @@ func optNodesDiff(sourceLayerRootNode *Node, targetLayerRootNode *Node) float64 
 	}
 	sNodeNumSum := sourceLayerRootNode.NodeNumSum()
 	tNodeNumSum := targetLayerRootNode.NodeNumSum()
-	s := sNodeNumSum + tNodeNumSum
+	s := tNodeNumSum + tNodeNumSum
 	t := s + 1
 
 	g := Graph{
