@@ -1,5 +1,11 @@
 package tree
 
+import (
+	"math"
+)
+
+const SIGINIGICANT_DIGITS = 100000
+
 func AlignmentDistance(sNodes, tNodes []*Node) (sum float64, err error) {
 	if len(sNodes) > len(tNodes) {
 		sNodes, tNodes = SwapNodeSlice(sNodes, tNodes)
@@ -53,12 +59,13 @@ func optNodesDiff(sNodes, tNodes []*Node) (float64, []*Node) {
 
 	for i, _ := range tNodes {
 		for j, _ := range tNodes {
-			var cost float64
+			var d float64
 			if i < sNodesLength {
-				cost = NodeDataDiff(sNodes[i], tNodes[j])
+				d = NodeDataDiff(sNodes[i], tNodes[j])
 			} else {
-				cost = NodeDataDiff(nil, tNodes[j])
+				d = NodeDataDiff(nil, tNodes[j])
 			}
+			cost := int(round(d * SIGINIGICANT_DIGITS))
 			g.AddEdge(i, j+tNodesLength, 1, cost)
 		}
 	}
@@ -68,13 +75,13 @@ func optNodesDiff(sNodes, tNodes []*Node) (float64, []*Node) {
 		g.AddEdge(i+tNodesLength, t, 1, 0)
 	}
 
-	res = MinCostFlow(&g, s, t, tNodesLength)
-
-	tNewNodes := fixNodePointer(sNodes, tNodes, &g)
+	flow := MinCostFlow(&g, s, t, tNodesLength)
+	res = float64(flow / SIGINIGICANT_DIGITS)
+	tNewNodes := fixNodePointer(tNodes, &g)
 	return res, tNewNodes
 }
 
-func fixNodePointer(sNodes, tNodes []*Node, g *Graph) []*Node {
+func fixNodePointer(tNodes []*Node, g *Graph) []*Node {
 	var resNodes []*Node
 
 	for i := range tNodes {
@@ -86,4 +93,8 @@ func fixNodePointer(sNodes, tNodes []*Node, g *Graph) []*Node {
 		}
 	}
 	return resNodes
+}
+
+func round(f float64) float64 {
+	return math.Floor(f + .5)
 }
