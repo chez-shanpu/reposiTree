@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"math"
 
 	"github.com/chez-shanpu/reposiTree/pkg/tree"
 	"github.com/spf13/cobra"
@@ -40,6 +41,7 @@ func compareTree(cmd *cobra.Command, args []string) (err error) {
 	if err != nil {
 		return err
 	}
+	dist = math.Round(dist*tree.SIGINIGICANT_DIGITS) / tree.SIGINIGICANT_DIGITS
 	fmt.Print(dist)
 	return nil
 }
