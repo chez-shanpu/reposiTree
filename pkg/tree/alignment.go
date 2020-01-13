@@ -11,8 +11,21 @@ func AlignmentDistance(sNodes, tNodes []*Node) (sum float64, err error) {
 		sNodes, tNodes = SwapNodeSlice(sNodes, tNodes)
 	}
 
-	res, tNodes := optNodesDiff(sNodes, tNodes)
-	sum += res
+	if sNodes == nil && tNodes == nil {
+		return 0, nil
+	} else if sNodes == nil {
+		for i, _ := range tNodes {
+			sum += NodeDataDiff(nil, tNodes[i])
+		}
+	} else if tNodes == nil {
+		for i, _ := range sNodes {
+			sum += NodeDataDiff(sNodes[i], nil)
+		}
+	} else {
+		var diff int
+		diff, tNodes = optNodesDiff(sNodes, tNodes)
+		sum += float64(diff) / float64(SIGINIGICANT_DIGITS)
+	}
 
 	for i, _ := range tNodes {
 		var dist float64
@@ -32,21 +45,8 @@ func AlignmentDistance(sNodes, tNodes []*Node) (sum float64, err error) {
 }
 
 // Must sourceLayer length < targetLayer length
-func optNodesDiff(sNodes, tNodes []*Node) (float64, []*Node) {
-	var res float64
-	if sNodes == nil && tNodes == nil {
-		return 0, tNodes
-	} else if sNodes == nil {
-		for i, _ := range tNodes {
-			res += NodeDataDiff(nil, tNodes[i])
-		}
-		return res, tNodes
-	} else if tNodes == nil {
-		for i, _ := range sNodes {
-			res += NodeDataDiff(sNodes[i], nil)
-		}
-		return res, tNodes
-	}
+func optNodesDiff(sNodes, tNodes []*Node) (int, []*Node) {
+	var res int
 
 	sNodesLength := len(sNodes)
 	tNodesLength := len(tNodes)
@@ -65,7 +65,7 @@ func optNodesDiff(sNodes, tNodes []*Node) (float64, []*Node) {
 			} else {
 				d = NodeDataDiff(nil, tNodes[j])
 			}
-			cost := int(round(d * SIGINIGICANT_DIGITS))
+			cost := int(math.Round(d * SIGINIGICANT_DIGITS))
 			g.AddEdge(i, j+tNodesLength, 1, cost)
 		}
 	}
@@ -75,8 +75,7 @@ func optNodesDiff(sNodes, tNodes []*Node) (float64, []*Node) {
 		g.AddEdge(i+tNodesLength, t, 1, 0)
 	}
 
-	flow := MinCostFlow(&g, s, t, tNodesLength)
-	res = float64(flow / SIGINIGICANT_DIGITS)
+	res = MinCostFlow(&g, s, t, tNodesLength)
 	tNewNodes := fixNodePointer(tNodes, &g)
 	return res, tNewNodes
 }
@@ -93,8 +92,4 @@ func fixNodePointer(tNodes []*Node, g *Graph) []*Node {
 		}
 	}
 	return resNodes
-}
-
-func round(f float64) float64 {
-	return math.Floor(f + .5)
 }

@@ -46,6 +46,7 @@ func NodeDataDiff(sNode *Node, tNode *Node) (res float64) {
 		}
 	}
 	res = math.Sqrt(sum)
+	res = math.Round(res*SIGINIGICANT_DIGITS) / SIGINIGICANT_DIGITS
 	return res
 }
 
