@@ -1,0 +1,27 @@
+builds:
+- id: "repotr"
+
+  # Binary name.
+  binary: repotr
+
+  # Custom ldflags templates.
+  # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`.
+  ldflags:
+  - -X github.com/chez-shanpu/reposiTree/cmd.Version=${VERSION} -X github.com/chez-shanpu/reposiTree/cmd.Revision=${HASH}
+
+  # Custom environment variables to be set during the builds.
+  env:
+  - VERSION=$(git describe --tags)
+  - HASH=$(git rev-parse --short HEAD)
+
+  # GOOS list to build for.
+  goos:
+  - linux
+  - darwin
+  - windows
+
+  # GOARCH to build for.
+  goarch:
+  - amd64
+  - arm
+  - arm64
