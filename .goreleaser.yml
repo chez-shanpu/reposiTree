@@ -8,10 +8,8 @@ builds:
   # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`.
   ldflags:
   - -X github.com/chez-shanpu/reposiTree/cmd.Version=${VERSION} -X github.com/chez-shanpu/reposiTree/cmd.Revision=${HASH}
-  - ./usemsan=-msan
 
   # Custom environment variables to be set during the builds.
-  # Default is empty.
   env:
   - VERSION=$(git describe --tags)
   - HASH=$(git rev-parse --short HEAD)
