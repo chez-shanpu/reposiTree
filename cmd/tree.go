@@ -5,10 +5,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	RootCmd.AddCommand(NewTreeCmd())
-}
-
 func NewTreeCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "tree",
