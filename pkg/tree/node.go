@@ -63,7 +63,9 @@ func MakeNode(dirPath string, dirName string, depth int, language string, pNode 
 	}
 	for _, file := range files {
 		if file.IsDir() {
-			subDirs = append(subDirs, file)
+			if file.Name() != ".git" {
+				subDirs = append(subDirs, file)
+			}
 		} else {
 			nodeDataIndex, err := FileClassifier(filepath.Join(dirPath,file.Name()), language)
 			if err != nil {
