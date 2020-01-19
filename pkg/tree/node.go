@@ -50,7 +50,7 @@ func NodeDataDiff(sNode *Node, tNode *Node) (res float64) {
 	return res
 }
 
-func MakeNode(dirPath string, dirName string, depth int, language string, pNode *Node) (*Node, error) {
+func MakeNode(dirPath string, dirName string, depth, maxDepth int, language string, pNode *Node) (*Node, error) {
 	var subDirs []os.FileInfo
 
 	n := new(Node)
@@ -84,12 +84,14 @@ func MakeNode(dirPath string, dirName string, depth int, language string, pNode 
 		}
 	}
 
-	for _, subDir := range subDirs {
-		childNode, err := MakeNode(filepath.Join(dirPath, subDir.Name()), filepath.Join(dirName, subDir.Name()), depth+1, language, n)
-		if err != nil {
-			return nil, err
+	if depth < maxDepth {
+		for _, subDir := range subDirs {
+			childNode, err := MakeNode(filepath.Join(dirPath, subDir.Name()), filepath.Join(dirName, subDir.Name()), depth+1, maxDepth, language, n)
+			if err != nil {
+				return nil, err
+			}
+			n.ChildNodes = append(n.ChildNodes, childNode)
 		}
-		n.ChildNodes = append(n.ChildNodes, childNode)
 	}
 	return n, nil
 }
