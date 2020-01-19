@@ -12,36 +12,35 @@ import (
 )
 
 const (
-	MaxFiletype = 8
+	MaxFiletype = 7
 
 	TypeOther    = 0
 	TypeSource   = 1
-	TypeMakefile = 2
-	TypeDocker   = 3
-	TypeConfig   = 4
-	TypeStatic   = 5
-	TypeDocument = 6
-	TypeImage    = 7
+	TypeBuild    = 2
+	TypeConfig   = 3
+	TypeStatic   = 4
+	TypeDocument = 5
+	TypeImage    = 6
 )
 
+// see https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
 var (
 	GoSourceRegex         = regexp.MustCompile(`.*\.go$`)
-	JsSourceRegex         = regexp.MustCompile(`.*\.js$`)
-	PythonSourceRegex     = regexp.MustCompile(`.*\.py$`)
-	JavaSourceRegex       = regexp.MustCompile(`.*\.java$`)
-	PhpSourceRegex        = regexp.MustCompile(`.*\.php$`)
-	CsharpSourceRegex     = regexp.MustCompile(`.*\.cs$`)
-	CppSourceRegex        = regexp.MustCompile(`.*\.cpp$`)
-	TypescriptSourceRegex = regexp.MustCompile(`.*\.ts$`)
-	ShellSourceRegex      = regexp.MustCompile(`.*\.sh$`)
-	CSourceRegex          = regexp.MustCompile(`.*\.c$`)
-	RubySourceRegex       = regexp.MustCompile(`.*\.rb$`)
+	JsSourceRegex         = regexp.MustCompile(`.*\.(js|jsx|_js|bones|cjs|es|es6|frag|gs|jake|jsb|jscad|jsfl|jsm|jss|mjs|njs|pac|sjs|ssjs|xsjs|xsjslib|js\.erb|vue|)$`)
+	PythonSourceRegex     = regexp.MustCompile(`.*\.(py|pyx|pxd|pxi|numpy|numpyw|numsc|bzl|cgi|fcgi|gyp|gypi|lmi|py3|pyde|pyi|pyp|pyt|pyw|rpy|smk|spec|tac|wsgi|xpy|pytb|sage|sagews)$`)
+	JavaSourceRegex       = regexp.MustCompile(`.*\.(java|properties|jsp)$`)
+	PhpSourceRegex        = regexp.MustCompile(`.*\.(php|hack|hh|hhi|aw|ctp|fcgi|inc|php3|php4|php5|phps|php_cs|php_cs\.dist|zig)$`)
+	CsharpSourceRegex     = regexp.MustCompile(`.*\.(cs|cake|csx)$`)
+	CppSourceRegex        = regexp.MustCompile(`.*\.(cpp|c\+\+|cc|cp|cxx|h|h\+\+|hh|hpp|hxx|inc|inl|ino|ipp|re|tcc|tpp)$`)
+	TypescriptSourceRegex = regexp.MustCompile(`.*\.(ts|tsx)$`)
+	ShellSourceRegex      = regexp.MustCompile(`(.*\.(sh|ebuild|eclass|ps1|psd1|psm1|bash|bats|cgi|command|fcgi|ksh|sh\.in|tmux|tool|zsh|tcsh|csh)$)|(^(\.(bash_aliases|bash_history|bash_logout|bash_profile|bashrc|cshrc|login|profile|zlogin|zlogout|zprofile|zshenv|zshrc)|9fs|PKGBUILD|bash_aliases|bash_logout|bash_profile|bashrc|cshrc|gradlew|login|man|profile|zlogin|zlogout|zprofile|zshenv|zshrc)$)`)
+	CSourceRegex          = regexp.MustCompile(`.*\.(c|cats|h|idc)$`)
+	RubySourceRegex       = regexp.MustCompile(`(.*\.(rb|builder|eye|fcgi|gemspec|god|jbuilder|mspec|pluginspec|podspec|rabl|rake|rbi|rbuild|rbw|rbx|ru|ruby|spec|thor|watchr)$)|(^(\.irbrc|\.pryrc|Appraisals|Berksfile|Brewfile|Buildfile|Capfile|Dangerfile|Deliverfile|Fastfile|Gemfile|Gemfile\.lock|Guardfile|Jarfile|Mavenfile|Podfile|Puppetfile|Rakefile|Snapfile|Thorfile|Vagrantfile|buildfile)$)`)
 
-	MakefileRegex   = regexp.MustCompile(`^Makefile$`)
-	DockerfileRegex = regexp.MustCompile(`^Dockerfile$`)
+	BuildfileRegex  = regexp.MustCompile(`(.*\.(mak|d|make|mk|mkfile|dockerfile)$)|(^(Makefile|BSDmakefile|GNUmakefile|Kbuild|Makefile\.am|Makefile\.boot|Makefile\.frag|Makefile\.in|Makefile\.inc|Makefile\.wat|makefile|makefile\.sco|mkfile|Dockerfile)$)`)
 	ConfigfileRegex = regexp.MustCompile(`.*\.(env|cfg)$`)
-	StaticfileRegex = regexp.MustCompile(`.*\.(html|css|scss)$`)
-	DocumentsRegex  = regexp.MustCompile(`.*\.(md|txt)$`)
+	StaticfileRegex = regexp.MustCompile(`.*\.(html|htm|html\.hl|inc|st|xht|xhtml|jinja|jinja2|mustache|njk|ecr|eex|erb|erb\.deface|phtml|cshtml|razor|haml|haml\.deface|handlebars|hbs|kit|latte|liquid|mtml|marko|jade|pug|rhtml|scaml|slim|svelte|twig|css|less|mss|pcss|postcss|sass|styl|sss|scss)$`)
+	DocumentsRegex  = regexp.MustCompile(`.*\.(md|markdown|mdown|mdwn|mdx|mkd|mkdn|mkdown|ronn|wrokbook|rmd|txt)$`)
 )
 
 func FileClassifier(filePath, language string) (int, error) {
@@ -72,6 +71,8 @@ func FileClassifier(filePath, language string) (int, error) {
 		sourceRegex = CsharpSourceRegex
 	case "cs":
 		sourceRegex = CsharpSourceRegex
+	case "csharp":
+		sourceRegex = CsharpSourceRegex
 	case "cpp":
 		sourceRegex = CppSourceRegex
 	case "typescript":
@@ -94,10 +95,8 @@ func FileClassifier(filePath, language string) (int, error) {
 	switch {
 	case sourceRegex.MatchString(fileName): // Matching Sourcefiles
 		return TypeSource, nil
-	case MakefileRegex.MatchString(fileName): // Matching Makefiles
-		return TypeMakefile, nil
-	case DockerfileRegex.MatchString(fileName): // Matching Dockerfiles
-		return TypeDocker, nil
+	case BuildfileRegex.MatchString(fileName): // Matching Buidldfiles
+		return TypeBuild, nil
 	case ConfigfileRegex.MatchString(fileName): // Matching Configfiles
 		return TypeConfig, nil
 	case StaticfileRegex.MatchString(fileName): // Matching Staticfiles

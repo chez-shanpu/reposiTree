@@ -26,8 +26,8 @@ func TestSourceFileClassifier(t *testing.T) {
 }
 
 func TestMakeFileClassifier(t *testing.T) {
-	fileNames := []string{"Makefile"}
-	expectRes := tree.TypeMakefile
+	fileNames := []string{"Makefile", "Dockerfile"}
+	expectRes := tree.TypeBuild
 	for _, fileName := range fileNames {
 		res, _ := tree.FileClassifier(fileName, "go")
 		if res != expectRes {
@@ -35,27 +35,7 @@ func TestMakeFileClassifier(t *testing.T) {
 		}
 	}
 
-	wrongFileNames := []string{"hogeMakefile", "Makefilehoge", "makefile"}
-	expectRes = tree.TypeOther
-	for _, wrongFileName := range wrongFileNames {
-		res, _ := tree.FileClassifier(wrongFileName, "go")
-		if res != expectRes {
-			t.Errorf("Return: %v Expected: %v FileName: %v", res, expectRes, wrongFileName)
-		}
-	}
-}
-
-func TestDockerFileClassifier(t *testing.T) {
-	fileNames := []string{"Dockerfile"}
-	expectRes := tree.TypeDocker
-	for _, fileName := range fileNames {
-		res, _ := tree.FileClassifier(fileName, "go")
-		if res != expectRes {
-			t.Errorf("Return: %v Expected: %v FileName: %v", res, expectRes, fileName)
-		}
-	}
-
-	wrongFileNames := []string{"hogeDockerfile", "Dockerfilehoge", "dockerfile"}
+	wrongFileNames := []string{"hogeMakefile", "Makefilehoge", "hogeDockerfile", "Dockerfilehoge", "dockerfile"}
 	expectRes = tree.TypeOther
 	for _, wrongFileName := range wrongFileNames {
 		res, _ := tree.FileClassifier(wrongFileName, "go")

@@ -55,7 +55,7 @@ func MakeNode(dirPath string, dirName string, depth int, language string, pNode 
 
 	n := new(Node)
 	n.DirectoryName = dirName
-	n.Vector = [MaxFiletype]float64{0, 0, 0, 0, 0, 0, 0, 0}
+	n.Vector = [MaxFiletype]float64{0, 0, 0, 0, 0, 0, 0}
 
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
@@ -67,7 +67,7 @@ func MakeNode(dirPath string, dirName string, depth int, language string, pNode 
 				subDirs = append(subDirs, file)
 			}
 		} else {
-			nodeDataIndex, err := FileClassifier(filepath.Join(dirPath,file.Name()), language)
+			nodeDataIndex, err := FileClassifier(filepath.Join(dirPath, file.Name()), language)
 			if err != nil {
 				return nil, err
 			}
