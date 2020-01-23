@@ -6,7 +6,7 @@ import (
 )
 
 // Maximum number of network nodes
-const MaxV = 10000
+const MaxV = 50000
 const INF = 10000000
 
 type Edge struct {
