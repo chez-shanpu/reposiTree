@@ -17,6 +17,7 @@ func NewTreeCmd() *cobra.Command {
 
 	cmd.AddCommand(treecmd.NewTreeMakeCmd())
 	cmd.AddCommand(treecmd.NewTreeCompareCmd())
+	cmd.AddCommand(treecmd.NewTreeRemakeCmd())
 
 	return cmd
 }
