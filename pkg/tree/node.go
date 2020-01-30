@@ -80,7 +80,7 @@ func MakeNode(dirPath string, dirName string, depth, maxDepth int, language stri
 		if pNode == nil {
 			n.Vector[key] = n.Vector[key] / float64(depth)
 		} else {
-			n.Vector[key] = (n.Vector[key] + n.Vector[key]) / float64(depth)
+			n.Vector[key] = (n.Vector[key] + pNode.Vector[key]) / float64(depth)
 		}
 	}
 
