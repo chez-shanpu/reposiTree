@@ -6,12 +6,12 @@ import (
 	"strconv"
 )
 
-func OutputAbstractRepository(nodes []*Node, outPath string) error {
+func OutputAbstractRepository(nodes []*Node, outPath string, thr float64) error {
 	var dirName string
 	for _, n := range nodes {
 		cnt := 0
 		for true {
-			dirName = getDirName(n, strconv.Itoa(cnt))
+			dirName = getDirName(n, strconv.Itoa(cnt), thr)
 			if _, err := os.Stat(filepath.Join(outPath, dirName)); err == nil {
 				cnt++
 				continue
@@ -26,7 +26,7 @@ func OutputAbstractRepository(nodes []*Node, outPath string) error {
 			}
 		}
 		if n.ChildNodes != nil {
-			err := OutputAbstractRepository(n.ChildNodes, filepath.Join(outPath, dirName))
+			err := OutputAbstractRepository(n.ChildNodes, filepath.Join(outPath, dirName), thr)
 			if err != nil {
 				return err
 			}
@@ -35,7 +35,7 @@ func OutputAbstractRepository(nodes []*Node, outPath string) error {
 	return nil
 }
 
-func getDirName(n *Node, suffix string) string {
+func getDirName(n *Node, suffix string, thr float64) string {
 	name := ""
 	nameList := map[int]string{
 		TypeOther:    "others",
@@ -47,7 +47,7 @@ func getDirName(n *Node, suffix string) string {
 		TypeImage:    "image",
 	}
 	for i, v := range n.Vector {
-		if v > 0 {
+		if v >= thr {
 			if name != "" {
 				name += "_"
 			}
