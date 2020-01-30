@@ -50,7 +50,7 @@ func NodeDataDiff(sNode *Node, tNode *Node) (res float64) {
 	return res
 }
 
-func MakeNode(dirPath string, dirName string, depth, maxDepth int, language string, pNode *Node) (*Node, error) {
+func MakeNode(dirPath string, dirName string, depth, maxDepth int, language string) (*Node, error) {
 	var subDirs []os.FileInfo
 
 	n := new(Node)
@@ -77,16 +77,12 @@ func MakeNode(dirPath string, dirName string, depth, maxDepth int, language stri
 		}
 	}
 	for key := range n.Vector {
-		if pNode == nil {
-			n.Vector[key] = n.Vector[key] / float64(depth)
-		} else {
-			n.Vector[key] = (n.Vector[key] + pNode.Vector[key]) / float64(depth)
-		}
+		n.Vector[key] = n.Vector[key] / float64(depth)
 	}
 
 	if depth < maxDepth {
 		for _, subDir := range subDirs {
-			childNode, err := MakeNode(filepath.Join(dirPath, subDir.Name()), filepath.Join(dirName, subDir.Name()), depth+1, maxDepth, language, n)
+			childNode, err := MakeNode(filepath.Join(dirPath, subDir.Name()), filepath.Join(dirName, subDir.Name()), depth+1, maxDepth, language)
 			if err != nil {
 				return nil, err
 			}
