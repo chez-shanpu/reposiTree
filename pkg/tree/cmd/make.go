@@ -51,7 +51,7 @@ func makeTree(cmd *cobra.Command, args []string) error {
 	}
 	_, repoName := filepath.Split(repoRootPath)
 
-	rootNode, err := tree.MakeNode(repoRootPath, repoName, 1, maxDepth, language, nil)
+	rootNode, err := tree.MakeNode(repoRootPath, repoName, 1, maxDepth, language)
 	if err != nil {
 		return err
 	}
