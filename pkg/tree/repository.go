@@ -47,7 +47,7 @@ func getDirName(n *Node, suffix string, thr float64) string {
 		TypeImage:    "image",
 	}
 	for i, v := range n.Vector {
-		if v >= thr {
+		if v > thr {
 			if name != "" {
 				name += "_"
 			}
