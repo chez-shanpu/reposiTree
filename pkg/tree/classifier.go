@@ -33,7 +33,7 @@ var (
 	CsharpSourceRegex     = regexp.MustCompile(`.*\.(cs|cake|csx)$`)
 	CppSourceRegex        = regexp.MustCompile(`.*\.(cpp|c\+\+|cc|cp|cxx|h|h\+\+|hh|hpp|hxx|inc|inl|ino|ipp|re|tcc|tpp)$`)
 	TypescriptSourceRegex = regexp.MustCompile(`.*\.(ts|tsx)$`)
-	ShellSourceRegex      = regexp.MustCompile(`(.*\.(sh|ebuild|eclass|ps1|psd1|psm1|bash|bats|cgi|command|fcgi|ksh|sh\.in|tmux|tool|zsh|tcsh|csh)$)|(^(\.(bash_aliases|bash_history|bash_logout|bash_profile|bashrc|cshrc|login|profile|zlogin|zlogout|zprofile|zshenv|zshrc)|9fs|PKGBUILD|bash_aliases|bash_logout|bash_profile|bashrc|cshrc|gradlew|login|man|profile|zlogin|zlogout|zprofile|zshenv|zshrc)$)`)
+	ShellSourceRegex      = regexp.MustCompile(`(.*\.(sh|ebuild|eclass|ps1|psd1|psm1|bash|bats|cgi|command|fcgi|ksh|sh\.in|tmux|tool|zsh|tcsh|csh|fish)$)|(^(\.(bash_aliases|bash_history|bash_logout|bash_profile|bashrc|cshrc|login|profile|zlogin|zlogout|zprofile|zshenv|zshrc)|9fs|PKGBUILD|bash_aliases|bash_logout|bash_profile|bashrc|cshrc|gradlew|login|man|profile|zlogin|zlogout|zprofile|zshenv|zshrc)$)`)
 	CSourceRegex          = regexp.MustCompile(`.*\.(c|cats|h|idc)$`)
 	RubySourceRegex       = regexp.MustCompile(`(.*\.(rb|builder|eye|fcgi|gemspec|god|jbuilder|mspec|pluginspec|podspec|rabl|rake|rbi|rbuild|rbw|rbx|ru|ruby|spec|thor|watchr)$)|(^(\.irbrc|\.pryrc|Appraisals|Berksfile|Brewfile|Buildfile|Capfile|Dangerfile|Deliverfile|Fastfile|Gemfile|Gemfile\.lock|Guardfile|Jarfile|Mavenfile|Podfile|Puppetfile|Rakefile|Snapfile|Thorfile|Vagrantfile|buildfile)$)`)
 
